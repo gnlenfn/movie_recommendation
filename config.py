@@ -6,7 +6,8 @@ load_dotenv(verbose=True)
 
 MONGODB_PASSWORD=os.getenv('PASSWORD')
 MONGODB_USERNAME=os.getenv('USERNAME')
-MONGO_URI=f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@cluster0.vlbhg.mongodb.net/movies?retryWrites=true&w=majority"
+MONGODB_URI=os.getenv("MONGODB_URI")
+MONGO_URI=f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_URI}"
 
 mongo = MongoClient(MONGO_URI)
 SECRET_KEY=os.getenv('SECRET_KEY')
