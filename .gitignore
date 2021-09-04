@@ -1,0 +1,4 @@
+.env
+models/nsmc/*
+log
+models_make.py

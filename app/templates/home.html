@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder" 
+            style="font-family: 'Do Hyeon', sans-serif; font-size: 70px;">
+                영화, 어떤거 볼래?
+            </h1>
+            <p class="lead fw-normal text-white-50 mb-0" 
+            style="font-family: 'Do Hyeon', sans-serif; font-size: 24px;">
+                리뷰 감성분석으로 추천하는 영화!
+            </p>
+        </div>
+    </div>
+</header>
+
+ <section class="py-5">
+     <div class="container px-4 px-lg-5 mt-5">
+         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+             {% for title in movie_list %}
+             <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- 영화 포스터-->
+                    <img class="card-img-top" src="{{rev.get_data_from_db(title)['poster']}}" alt="">
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- 영화 제목-->
+                            <h5 class="fw-bolder" style="font-family: Do Hyeon; font-size: 24px;">
+                                {{title}}
+                            </h5>
+                            <!-- 추천 여부-->
+                            {% if rev.get_data_from_db(title)['recommend'] == 'yes' %}
+                            <p style="color:blue; font-family: 'Jua', sans-serif; font-size: 18px;">
+                                추천! 😀👍
+                            </p>
+                            {% elif rev.get_data_from_db(title)['recommend'] == 'soso' %} 
+                            <p style="color:rgb(218, 185, 0); font-family: 'JUA';">호불호 갈림 😶</p>
+                            {% else %}
+                            <p style="color:red; font-family: 'Jua', sans-serif; font-size: 18px;">
+                                비추천! 😟👎
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- 세부 리뷰 보기?-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            <a class="btn btn-outline-dark mt-auto" 
+                            href="{{ url_for('review.show_details', title=title) }}">
+                                리뷰 보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

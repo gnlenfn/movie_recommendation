@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-3">
+    <!-- 긍정 리뷰 -->
+    <h1 class="border-bottom py-2" style="font-family: Do Hyeon;">{{ title }}</h1>
+    <div class="card my-3">
+        <div class="card-body" style="background-color: #fa807269;">
+            <h2 style="font-family: 'Do Hyeon'; font-size: 35px;">😉 긍정 리뷰 😉</h2>
+            {% for review in pos_list %}
+            <div class="card-text" style="white-space: pre-line; font-family: 'JUA';">
+                <li>{{ review }}</li>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+
+    <!-- 부정 리뷰 -->
+    <div class="card my-3">
+        <div class="card-body" style="background-color: #ADD8E6;">
+            <h2 style="font-family: 'Do Hyeon'; font-size: 35px;">😒 부정 리뷰 😒</h2>
+            {% for review in neg_list %}
+            <div class="card-text" style="white-space: pre-line; font-family: 'JUA';">
+                <li>{{ review }}</li>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+</div>
+{% endblock %}
