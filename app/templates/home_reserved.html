@@ -17,36 +17,54 @@
 </header>
 
  <section class="py-5">
-     <div class="container px-4 px-lg-5 mt-5">
+     <div class="btn-group" role="group" aria-label="Basic example" style="margin-left: 90px;">
+        <button type="button" class="btn btn-dark">
+            <a href="{{ url_for('main.index') }}" 
+            style="color: white; text-decoration: none; font-family: 'JUA';">
+                예매율 순
+            </a>
+        </button>
+         <button type="button" class="btn btn-outline-secondary">
+            <a href="{{ url_for('main.sorted_by_date') }}" 
+            style="color: black; text-decoration: none; font-family: 'JUA';">
+                개봉일 순
+            </a>
+        </button>
+    </div>
+    <div class="container px-4 px-lg-5 mt-5">
          <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
              {% for title in movie_list %}
+             {% set data = rev.get_data_from_db(title) %}
              <div class="col mb-5">
                 <div class="card h-100">
                     <!-- 영화 포스터-->
-                    <img class="card-img-top" src="{{rev.get_data_from_db(title)['poster']}}" alt="">
+                    <img class="card-img-top" src="{{data['poster']}}" alt="">
                     <!-- Product details-->
-                    <div class="card-body p-4">
+                    <div class="card-body p-4" style="background-color: rgb(219, 219, 219);">
                         <div class="text-center">
                             <!-- 영화 제목-->
                             <h5 class="fw-bolder" style="font-family: Do Hyeon; font-size: 24px;">
                                 {{title}}
                             </h5>
                             <!-- 추천 여부-->
-                            {% if rev.get_data_from_db(title)['recommend'] == 'yes' %}
+                            {% if data['recommend'] == 'yes' %}
                             <p style="color:blue; font-family: 'Jua', sans-serif; font-size: 18px;">
                                 추천! 😀👍
                             </p>
-                            {% elif rev.get_data_from_db(title)['recommend'] == 'soso' %} 
-                            <p style="color:rgb(218, 185, 0); font-family: 'JUA';">호불호 갈림 😶</p>
+                            {% elif data['recommend'] == 'soso' %} 
+                            <p style="color:rgb(195, 166, 3); font-family: 'JUA';">호불호 갈림 😶</p>
                             {% else %}
                             <p style="color:red; font-family: 'Jua', sans-serif; font-size: 18px;">
                                 비추천! 😟👎
                             </p>
                             {% endif %}
                         </div>
+                        <div class='text-center'>
+                            <a style="font-family: JUA; color: rgb(85, 53, 53); font-size: 18px;">예매율 : {{data['reserved']}} %</style>
+                        </div>                        
                     </div>
                     <!-- 세부 리뷰 보기?-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="card-footer p-4 pt-0 border-top-0" style="background-color: rgb(219, 219, 219);">
                         <div class="text-center">
                             <a class="btn btn-outline-dark mt-auto" 
                             href="{{ url_for('review.show_details', title=title) }}">

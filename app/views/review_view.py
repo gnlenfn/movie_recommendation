@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template
 from app.models import Review
-from models.baseline.predict import predict_neg_pos
 
-# 리뷰보기 페이지 만들어야함 + html
 bp = Blueprint('review', __name__, url_prefix="/reviews/")
 
 @bp.route('/details/<string:title>/', methods=['GET'])

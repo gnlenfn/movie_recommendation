@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request
 from app.models import Review
 from app import mongo
 from app.forms import AddMovieForm
-from models.baseline.predict import predict_neg_pos
 
 bp = Blueprint('query', __name__, url_prefix="/")
 

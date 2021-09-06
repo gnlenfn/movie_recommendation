@@ -3,6 +3,7 @@ import requests
 import os
 import pandas as pd
 from collections import defaultdict
+import datetime
 
 BASE_URL = "https://movie.naver.com/movie"
 
@@ -23,35 +24,25 @@ def get_current_movie_code(num, refresh=False):
     soup, _ = get_page(page_url)
 
     target = soup.select('#content > div.article > div > div.lst_wrap > ul > li > dl > dt > a')
-    
-    if refresh:
-        if os.path.exists('./app/services/current_movie_code.csv'):
-            os.remove('./app/services/current_movie_code.csv')
-        
-        table = pd.DataFrame(columns=['title', 'code'])
-        for movie in target[:num]:
-            title = movie.text
-            code =  movie['href'].split("=")[1]
+    information = soup.select('#content > div.article > div:nth-of-type(1) > div.lst_wrap > ul > li > dl > dd > dl.info_txt1 > dd:nth-of-type(1)')     
+    ticket = soup.select('#content > div.article > div:nth-of-type(1) > div.lst_wrap > ul > li > dl > dd.star > dl.info_exp > dd > div > span.num')
 
-            if table['title'].empty or title not in set(table['title']):
-                table = table.append({"title": title, "code": code}, ignore_index=True)
-
-        return table
-
+    if os.path.isfile("./app/services/current_movie_code.csv"):
+        table = pd.read_csv("./app/services/current_movie_code.csv", names=['title', 'code'], sep=';', header=None)
     else:
-        if os.path.isfile("./app/services/current_movie_code.csv"):
-            table = pd.read_csv("./app/services/current_movie_code.csv", names=['title', 'code'], sep=';', header=None)
-        else:
-            table = pd.DataFrame(columns=['title', 'code'])
-            
-        for movie in target[:num]:
-            title = movie.text
-            code =  movie['href'].split("=")[1]
+        table = pd.DataFrame(columns=['title', 'code', 'opening_date', 'reserved'])
+        
+    for movie, opening, reserve in zip(target[:num], information[:num], ticket[:num]):
+        title = movie.text
+        code =  movie['href'].split("=")[1]
+        opening_date = opening.text.split()[-2]
+        ticketing = float(reserve.text)
 
-            if table['title'].empty or title not in set(table['title']):
-                table = table.append({"title": title, "code": code}, ignore_index=True)
+        if table['title'].empty or title not in set(table['title']):
+            table = table.append({"title": title, "code": code, 
+                                "opening_date": opening_date, 'reserved': ticketing}, ignore_index=True)
 
-        return table
+    return table
 
 def get_movie_code(movie_title):
     """
@@ -131,4 +122,20 @@ def get_poster(movie_code):
     poster_url = target['src']
 
     return poster_url
+
+
+def get_opening_date(movie_code):
+    page_url = f"{BASE_URL}/bi/mi/basic.naver?code={movie_code}"
+    soup, _ = get_page(page_url)
+
+    target = soup.select('#content > div.article > div.mv_info_area > div.mv_info > dl > dd > p > span')[-1].select('a')
+    #print(target)
+    date = ''
+    for i in target:
+        print(i)
+        date += i.text
+    date = date.strip()
+    if len(date) > 10:
+        date = date.split()[-1]
+    return datetime.datetime.strptime(date, '%Y.%m.%d')
 

@@ -6,17 +6,21 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 class Review:
     def add_movie_review(self, title, num=100):
+        if mongo.db.review.find_one({"title": title}):
+            return {"error": "Movie is already in database"}, 400
+
         code = scraping_reviews.get_movie_code(title)
         texts = scraping_reviews.scrap_reviews_of_num(code, num)
         poster = scraping_reviews.get_poster(code)
+        date = scraping_reviews.get_opening_date(code)
         prediction = []
         for idx, rev in enumerate(texts):
             print("predintion", idx)
             prediction.append(predict_neg_pos(rev))
 
-        if sum(prediction) > 60:
+        if sum(prediction) / len(prediction) > 0.6:
             result = "yes"
-        elif sum(prediction) < 40:
+        elif sum(prediction) / len(prediction) < 0.4:
             result = "no"
         else:
             result = "soso"
@@ -28,11 +32,9 @@ class Review:
             'reviews': texts,
             'prediction': prediction,
             "recommend": result,
-            "poster": poster
+            "poster": poster,
+            "opening_date": date
         }
-
-        if mongo.db.review.find_one({"title": reviews['title']}):
-            return {"error": "Movie is already in database"}, 400
         
         if mongo.db.review.insert_one(reviews):
             return reviews, 200
@@ -55,27 +57,21 @@ sched = BackgroundScheduler(daemon=True)
 
 def reset():
     df = scraping_reviews.get_current_movie_code(20)
-    for i, t in enumerate(df['title']):
-        print('title', i)
-        review_database.add_movie_review(t, 100)
+    for idx, title in enumerate(df['title']):
+        print('title', idx)
+        if mongo.db.review.find_one({"title": title}):
+            mongo.db.review.update_one({'title': title}, {"$set" : {"reserved": df['ticketing']}})
+        else:
+            review_database.add_movie_review(title, 100)
 
-sched.add_job(reset, 'cron', hour='4')
+sched.add_job(reset, 'cron', hour='11', minute='20')
 
-# movie_list = mongo.db.review.distinct('title')
-# for m in movie_list:
-#     pred = review_database.get_data_from_db(m)['prediction']
-#     if sum(pred) > 60:
-#         result = "yes"
-#     elif sum(pred) < 40:
-#         result = "no"
-#     else:
-#         result = "soso"
-#     print(result)
-#     mongo.db.review.update_one({"title": m}, {"$set": {'recommend': result}})
 
 if __name__ == '__main__':
     df = scraping_reviews.get_current_movie_code(20)
-    review_database = Review()
-    for i, t in enumerate(df['title']):
-        print('title', i)
-        print(review_database.add_movie_review(t, 100))
+    for idx, title in enumerate(df['title']):
+        print('title', idx)
+        if mongo.db.review.find_one({"title": title}):
+            mongo.db.review.update_one({'title': title}, {"$set" : {"reserved": df['reserved'][idx]}})
+        else:
+            review_database.add_movie_review(title, 100)

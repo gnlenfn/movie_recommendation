@@ -50,7 +50,7 @@
                 <div class="card h-100">
                     <!-- 영화 포스터-->
                     <img class="card-img-top" src="{{rev.get_data_from_db(form.title.data)['poster']}}"alt="">
-                    <div class="card-body p-4">
+                    <div class="card-body p-4" style="background-color: rgb(219, 219, 219);">
                         <div class="text-center">
                             <!-- 영화 제목-->
                             <h5 class="fw-bolder" style="font-family: Do Hyeon; font-size: 24px;">
@@ -60,12 +60,12 @@
                             {% if target == 'yes' %} 
                             <p style="color:blue; font-family: 'JUA';">추천! 😀👍</p>
                             {% elif target == 'soso' %} 
-                            <p style="color:rgb(218, 185, 0); font-family: 'JUA';">호불호 갈림 😶</p>
+                            <p style="color:rgb(195, 166, 3); font-family: 'JUA';">호불호 갈림 😶</p>
                             {% else %}
                             <p style="color:red; font-family: 'JUA'">비추천! 😟👎</p>
                             {% endif %} 
                         </div>
-                        <div class="text-center">
+                        <div class="text-center" style="background-color: rgb(219, 219, 219);">
                             <a class="btn btn-outline-dark mt-auto" href="{{ url_for('review.show_details', title=form.title.data) }}">
                                 리뷰 보기 
                             </a>
