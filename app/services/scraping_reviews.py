@@ -41,7 +41,6 @@ def get_current_movie_code(num, refresh=False):
         if table['title'].empty or title not in set(table['title']):
             table = table.append({"title": title, "code": code, 
                                 "opening_date": opening_date, 'reserved': ticketing}, ignore_index=True)
-
     return table
 
 def get_movie_code(movie_title):
@@ -78,6 +77,9 @@ def get_reviews(movie_code, page_num=1):
     
     review_dict = defaultdict(list)
     text = soup.find_all('td', class_='title')
+    if not text:
+        return {}
+
     for comment in text:
         review = comment.find('br').next.strip()
         score = comment.find('em').text
@@ -99,7 +101,11 @@ def scrap_reviews_of_num(movie_code, review_num):
     reviews = []
     page_num = 1
     while True:
-        on_this_page = get_reviews(movie_code, page_num)['review_text']
+        on_this_page = get_reviews(movie_code, page_num)
+        if not on_this_page:
+            break
+
+        on_this_page = on_this_page['review_text']
         if len(reviews) + len(on_this_page) > review_num:
             break
 
@@ -129,13 +135,10 @@ def get_opening_date(movie_code):
     soup, _ = get_page(page_url)
 
     target = soup.select('#content > div.article > div.mv_info_area > div.mv_info > dl > dd > p > span')[-1].select('a')
-    #print(target)
     date = ''
     for i in target:
-        print(i)
         date += i.text
     date = date.strip()
     if len(date) > 10:
         date = date.split()[-1]
-    return datetime.datetime.strptime(date, '%Y.%m.%d')
-
+    return datetime.date.strptime(date, '%Y.%m.%d')

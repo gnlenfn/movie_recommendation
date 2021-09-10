@@ -23,5 +23,5 @@ def sorted_by_date():
     rev = Review()
     table = scraping_reviews.get_current_movie_code(20)
     movie_list = table.sort_values(by='opening_date', ascending=False)['title']
-
+    
     return render_template("home_open.html", movie_list=movie_list, rev=rev)

@@ -9,7 +9,7 @@ bp = Blueprint('query', __name__, url_prefix="/")
 def recommend():
     rev = Review()
     form = AddMovieForm()
-
+ 
     if request.method == 'POST' and form.validate_on_submit():
         if mongo.db.review.find_one({'title': form.title.data}):
             target = rev.get_data_from_db(form.title.data)['recommend']

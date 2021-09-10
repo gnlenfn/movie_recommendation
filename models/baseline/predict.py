@@ -20,10 +20,10 @@ def predict_neg_pos(review):
     score = float(model.predict(data))
     if(score > 0.5):
         return 1
-        print("[{}]는 {:.2f}% 확률로 긍정 리뷰이지 않을까 추측해봅니다.^^\n".format(review, score * 100))
+
     else:
         return 0
-        print("[{}]는 {:.2f}% 확률로 부정 리뷰이지 않을까 추측해봅니다.^^;\n".format(review, (1 - score) * 100))
+
 
 if __name__ == '__main__':
     rev = ["올해 최고의 영화! 세 번 넘게 봐도 질리지가 않네요.",
