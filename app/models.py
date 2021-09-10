@@ -83,6 +83,6 @@ df = scraping_reviews.get_current_movie_code(20)
 for idx, title in enumerate(df['title']):
     print(title, idx)
     if mongo.db.review.find_one({"title": title}):
-        mongo.db.review.update_one({'title': title}, {"$set" : {"reserved": scraping_reviews.get_opening_date(df['code'][idx])}})
+        mongo.db.review.update_one({'title': title}, {"$set" : {"reserved": df['reserved'][idx]}})
     else:
         review_database.add_movie_review(title, 100, current=True)
