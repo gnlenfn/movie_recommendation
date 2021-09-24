@@ -141,4 +141,4 @@ def get_opening_date(movie_code):
     date = date.strip()
     if len(date) > 10:
         date = date.split()[-1]
-    return datetime.date.strptime(date, '%Y.%m.%d')
+    return datetime.datetime.strptime(date, '%Y.%m.%d')
