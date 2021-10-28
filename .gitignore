@@ -2,3 +2,4 @@
 models/nsmc/*
 log
 models_make.py
+pre.md
